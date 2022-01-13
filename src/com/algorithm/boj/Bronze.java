@@ -155,11 +155,6 @@ public class Bronze {
         Integer N = scanner.nextInt();
         for (int i=0; i < N; i++) {
             String[] line = scanner.nextLine().split(" ");
-            for (int x=0; x < N; x++) {
-                System.out.println(x);
-                System.out.println(line[x]);
-//                System.out.println(Integer.parseInt(line[x]));
-            }
             int num = Integer.parseInt(line[0]);
 
             int sum = 0;

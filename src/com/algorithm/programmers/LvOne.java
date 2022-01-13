@@ -1,10 +1,6 @@
 package com.algorithm.programmers;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class LvOne {
 
@@ -23,7 +19,7 @@ public class LvOne {
     }
 
     /**
-     * 신규 아이디 추
+     * 신규 아이디 추가
      * https://programmers.co.kr/learn/courses/30/lessons/72410
      */
     public String lvOne02(String new_id) {
@@ -73,6 +69,10 @@ public class LvOne {
         return answer;
     }
 
+    /**
+    * lvOne03
+    * 당첨 번호 리스트에 있는지 확
+     */
     public boolean contains(int[] src, int dst) {
         for (int i=0; i < src.length; i++) {
             if (src[i] == dst) {
@@ -80,5 +80,89 @@ public class LvOne {
             }
         }
         return false;
+    }
+
+    /**
+     * 키패드 누르
+     * https://programmers.co.kr/learn/courses/30/lessons/67256?language=java
+     */
+    public String lvOne04(int[] numbers, String hand) {
+        String answer = "";
+
+        int lx = 3;
+        int ly = 0;
+        int rx = 3;
+        int ry = 2;
+
+        for (int i=0; i < numbers.length; i++) {
+            int[] next = getXY(numbers[i]);
+            int nx = next[0];
+            int ny = next[1];
+
+            if (ny == 0) {
+                answer += "L";
+            } else if (ny == 2) {
+                answer += "R";
+                rx = nx;
+                ry = ny;
+            } else if (ny == 1) {
+                int lDist = Math.abs(nx - lx) + Math.abs(ny - ly);
+                int rDist = Math.abs(nx - rx) + Math.abs(ny - ry);
+                if (lDist > rDist) {
+                    answer += "R";
+                } else if (lDist < rDist) {
+                    answer += "L";
+                } else {
+                    answer += hand.substring(0,1).toUpperCase();
+                }
+            }
+            if (answer.charAt(answer.length()-1) == 'L') {
+                lx = nx;
+                ly = ny;
+            } else {
+                rx = nx;
+                ry = ny;
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * lvOne04
+     * 키패드의 x, y 좌표
+      */
+    public int[] getXY(int num) {
+        if (num == 0) {
+            return new int[]{3, 1};
+        }
+        return new int[]{(num-1)/3, (num-1)%3};
+    }
+
+    public int lvOne05(int[][] board, int[] moves) {
+        int answer = 0;
+        Stack<Integer> basket = new Stack<>();
+
+        for (int popIdx : moves) {
+            popIdx -= 1;
+            for (int i=0; i < board.length; i++) {
+                if (board[i][popIdx] != 0) {
+                    // 인형 뽑기
+                    int toy = board[i][popIdx];
+                    board[i][popIdx] = 0;
+
+                    // 바구니에 넣기
+                    if (!basket.empty()) {
+                        if (basket.peek() == toy) {
+                            answer += 2;
+                            basket.pop();
+                            break;
+                        }
+                    }
+                    basket.push(toy);
+                    break;
+                }
+            }
+        }
+        return answer;
     }
 }
