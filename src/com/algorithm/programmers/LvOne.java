@@ -1,8 +1,121 @@
 package com.algorithm.programmers;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.*;
 
 public class LvOne {
+
+    /**
+     * 없는 숫자 더하기
+     * https://programmers.co.kr/learn/courses/30/lessons/86051
+     */
+    public int lvOne08(int[] numbers) {
+        int answer = 0;
+        int idx = 0;
+        Arrays.sort(numbers);
+        for (int i=0; i<10; i++) {
+            if (numbers.length <= idx) {
+                answer += i;
+            } else if (numbers[idx] != i) {
+                answer += i;
+            } else {
+                idx++;
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * 없는 숫자 더하기 다른 풀이
+     */
+    public int lvOne08_v2(int[] numbers) {
+        int answer = 45;
+        for (int i: numbers) {
+            answer -= i;
+        }
+        return answer;
+    }
+
+    @Test
+    public void testLvOne08() {
+        int[] numbers1 = {1,2,3,4,6,7,8,0};
+        int[] numbers2 = {5,8,4,0,6,7,9};
+        Assert.assertEquals(14, lvOne08_v2(numbers1));
+        Assert.assertEquals(6, lvOne08_v2(numbers2));
+    }
+
+    /**
+     * 문자 숫자열과 영단어
+     * https://programmers.co.kr/learn/courses/30/lessons/81301
+     */
+    public int lvOne07(String s) {
+        String[] str = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+        for (int i=0; i<10; i++) {
+            s = s.replace(str[i], Integer.toString(i));
+        }
+        return Integer.parseInt(s);
+    }
+
+    @Test
+    public void testLvOne07() {
+        Assert.assertEquals(1478, lvOne07("one4seveneight"));
+        Assert.assertEquals(234567, lvOne07("23four5six7"));
+        Assert.assertEquals(234567, lvOne07("2three45sixseven"));
+        Assert.assertEquals(123, lvOne07("123"));
+    }
+
+    public int[] lvOne06(String[] id_list, String[] report, int k) {
+        int[] answer = new int[id_list.length];
+        int[] reportedCnt = new int[id_list.length];
+        HashMap<String, List<String>> map = new HashMap<>();
+        for (String id : id_list) {
+            map.put(id, new ArrayList<>());
+        }
+
+        // 사용자별 신고자 리스트를 채우고 신고 횟수를 카운팅
+        for (String r : report){
+            String reporter = r.split(" ")[0];
+            String reported = r.split(" ")[1];
+            List<String> reportUsers = map.get(reporter);
+            if (!reportUsers.contains(reported)) {
+                reportUsers.add(reported);
+                reportedCnt[indexOf(id_list, reported)]++;
+            }
+        }
+
+        for (int i=0; i< id_list.length; i++) {
+            for (String id : map.get(id_list[i])) {
+                if (reportedCnt[indexOf(id_list, id)] >= k) {
+                    answer[i]++;
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    public int indexOf(String[] array, String str) {
+        for (int i=0; i<array.length; i++) {
+            if (array[i].equals(str)) return i;
+        }
+        return -1;
+    }
+
+
+    @Test
+    public void testLvOne06() {
+        String[] id_list1 = {"muzi", "frodo", "apeach", "neo"};
+        String[] report1 = {"muzi frodo","apeach frodo","frodo neo","muzi neo","apeach muzi"};
+        int[] result1 = {2,1,1,0};
+        Assert.assertEquals(lvOne06(id_list1, report1, 2), result1);
+
+        String[] id_list2 = {"con", "ryan"};
+        String[] report2 = {"ryan con", "ryan con", "ryan con", "ryan con"};
+        int[] result2 = {0,0};
+        Assert.assertEquals(lvOne06(id_list2, report2, 3), result2);
+    }
 
     /**
      * 숫자 문자열과 영단
