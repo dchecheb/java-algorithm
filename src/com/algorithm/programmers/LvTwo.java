@@ -8,6 +8,44 @@ import java.util.*;
 public class LvTwo {
 
     /**
+     * 오픈채팅방
+     * https://programmers.co.kr/learn/courses/30/lessons/42888?language=java
+     */
+    public String[] lvTwo04(String[] record) {
+        List<String> answer = new ArrayList<>();
+        List<String[]> logs = new ArrayList<>();
+        HashMap<String, String> userName = new HashMap<>();
+        for (String action : record) {
+            String actionType = action.split(" ")[0];
+            String uid = action.split(" ")[1];
+            switch (actionType) {
+                case "Enter":
+                    logs.add(new String[]{uid, "님이 들어왔습니다."});
+                    userName.put(uid, action.split(" ")[2]);
+                    break;
+                case "Leave":
+                    logs.add(new String[]{uid, "님이 나갔습니다."});
+                    break;
+                case "Change":
+                    userName.put(uid, action.split(" ")[2]);
+                    break;
+            }
+        }
+
+        for (int i=0; i<logs.size(); i++) {
+            answer.add(userName.get(logs.get(i)[0]) + logs.get(i)[1]);
+        }
+        return answer.toArray(new String[0]);
+    }
+
+    @Test
+    public void testLvTwo04() {
+        String[] record = {"Enter uid1234 Muzi", "Enter uid4567 Prodo","Leave uid1234","Enter uid1234 Prodo","Change uid4567 Ryan"};
+        String[] result = {"Prodo님이 들어왔습니다.", "Ryan님이 들어왔습니다.", "Prodo님이 나갔습니다.", "Prodo님이 들어왔습니다."};
+        Assert.assertArrayEquals(result, lvTwo04(record));
+    }
+
+    /**
      * 문자열 압축
      * https://programmers.co.kr/learn/courses/30/lessons/60057?language=java
      */
