@@ -5,7 +5,7 @@ public class CombPerm {
     public static void main(String[] args) {
         int[] arr = {1,2,3};
         int n = 3;
-        int r = 2;
+        int r = 3;
         int[] output = new int[r];
         boolean[] visited = new boolean[n];
 

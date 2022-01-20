@@ -3,9 +3,97 @@ package com.algorithm.programmers;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class LvTwo {
+
+    /**
+     * 단체사진 찍기
+     * https://programmers.co.kr/learn/courses/30/lessons/1835
+     */
+    public int lvTwo05(int n, String[] data) {
+        int answer = 40320;
+        char[] friends = {'A', 'C', 'F', 'J', 'M', 'N', 'R', 'T'};
+        List<char[]> perms = new ArrayList<>();
+        boolean[] visited = new boolean[8];
+        permutation(friends, perms, new char[8], visited, 0);
+
+        for (char[] line : perms) {
+            for (String d : data) {
+                if (!isPossible(line, d)) {
+                    answer--;
+                    break;
+                }
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * lvTwo05
+     */
+    public boolean isPossible(char[] line, String d) {
+        int dist = Math.abs(indexOf(line, d.charAt(0)) - indexOf(line, d.charAt(2)))-1;
+        if (d.charAt(3) == '=') {
+            if (dist != Character.getNumericValue(d.charAt(4))) {
+                return false;
+            }
+        } else if (d.charAt(3) == '>') {
+            if (dist <= Character.getNumericValue(d.charAt(4))) {
+                return false;
+            }
+        } else {
+            if (dist >= Character.getNumericValue(d.charAt(4))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * lvTwo05
+     */
+    public int indexOf(char[] line, char c) {
+        for (int i = 0; i < line.length; i++) {
+            if (line[i] == c) return i;
+        }
+        return -1;
+    }
+
+    /**
+     * lvTwo05
+     */
+    public void permutation(char[] friends, List<char[]> perms, char[] s, boolean[] visited, int depth) {
+        if (depth == 8) {
+            perms.add(s.clone());
+            return;
+        }
+        for (int i=0; i<8; i++) {
+            if (visited[i] == true) {
+                continue;
+            }
+            visited[i] = true;
+            s[depth] = friends[i];
+            permutation(friends, perms, s, visited,  depth+1);
+            visited[i] = false;
+        }
+    }
+
+    @Test
+    public void testLvTwo05() {
+        String[] data = {"N~F=0", "R~T>2"};
+        Assert.assertEquals(3648, lvTwo05(2, data));
+    }
+
+    @Test
+    public void testLvTwo05IsPossible() {
+        char[] line = {'a', 'b', 'c', 'd'};
+        Assert.assertTrue(isPossible(line, "a~b=0"));
+        Assert.assertTrue(isPossible(line, "a~d<4"));
+        Assert.assertTrue(isPossible(line, "a~d>1"));
+        Assert.assertFalse(isPossible(line, "a~b>1"));
+    }
 
     /**
      * 오픈채팅방
@@ -100,6 +188,9 @@ public class LvTwo {
         String compression = "";
         String pattern = "";
 
+        int[] data = {3,1,2};
+//        List<Integer> dataList = Array.asList(data);
+
         for (int j = 0; j <= str.length() + i; j += i) {
 
             String nowStr;
@@ -170,6 +261,7 @@ public class LvTwo {
                 }
             }
         }
+
 
         return result.toArray(String[]::new);
     }
