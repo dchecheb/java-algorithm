@@ -5,8 +5,121 @@ import org.junit.Test;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.Map;
 
 public class LvTwo {
+
+    @Test
+    public void testLvTwo07() {
+        Assert.assertEquals(16384, lvTwo07("FRANCE", "french"));
+        Assert.assertEquals(43690, lvTwo07("aa1+aa2", "AAAA12"));
+        Assert.assertEquals(65536, lvTwo07("E=M*C^2", "e=m*c^2"));
+        Assert.assertEquals(65536, lvTwo07("handshake", "shake hand"));
+    }
+
+    /**
+     * 뉴스 클러스터링
+     * https://programmers.co.kr/learn/courses/30/lessons/17677
+     */
+    public int lvTwo07(String str1, String str2) {
+        // 소문자 통일
+        str1 = str1.toLowerCase();
+        str2 = str2.toLowerCase();
+
+        // 중복 체크
+        HashMap<String, Integer> str1Map = new HashMap<>();
+        HashMap<String, Integer> str2Map = new HashMap<>();
+        updateStrMap(str1Map, str1); // str1Map.get("ha") := ha 문자열 개수
+        updateStrMap(str2Map, str2);
+
+        float inter = 0f; // 교집합 개수
+        float union = 0f; // 합집합 개수
+
+        for (String key1 : str1Map.keySet()) {
+            for (String key2 : str2Map.keySet()) {
+                if (key1.equals(key2)) {
+                    inter += Math.min(str1Map.get(key1), str2Map.get(key2));
+                    union += Math.max(str1Map.get(key1), str2Map.get(key2));
+                    str1Map.put(key1, 0);
+                    str2Map.put(key2, 0);
+                    break;
+                }
+            }
+        }
+
+        for (String key : str1Map.keySet()) union += str1Map.get(key);
+        for (String key : str2Map.keySet()) union += str2Map.get(key);
+
+        if (inter == 0f || union == 0f) return 65536;
+        return (int) Math.floor(inter / union * 65536);
+    }
+
+    /**
+     * lvTwo07
+     */
+    public void updateStrMap(HashMap<String, Integer> strMap, String str) {
+        for (int i=0; i<str.length()-1; i++) {
+            String s = str.substring(i, i+2);
+            if (!s.matches("[a-z]+")) continue;
+            if (strMap.containsKey(s)) {
+                strMap.put(s, strMap.get(s)+1);
+            } else {
+                strMap.put(s, 1);
+            }
+        }
+    }
+
+
+    @Test
+    public void testLvTwo06() {
+        String[][] places = {{"POOOP", "OXXOX", "OPXPX", "OOXOX", "POXXP"}, {"POOPX", "OXPXP", "PXXXO", "OXXXO", "OOOPP"}, {"PXOPX", "OXOXP", "OXPOX", "OXXOP", "PXPOX"}, {"OOOXX", "XOOOX", "OOOXX", "OXOOX", "OOOOO"}, {"PXPXP", "XPXPX", "PXPXP", "XPXPX", "PXPXP"}};
+        int[] answer = {1,0,1,1,1};
+        Assert.assertArrayEquals(answer, lvTwo06(places));
+    }
+
+    /**
+     * 거리두기 확인하기
+     * https://programmers.co.kr/learn/courses/30/lessons/81302?language=java
+     */
+    public int[] lvTwo06(String[][] places) {
+        int[] answer = {1,1,1,1,1};
+
+        for (int i=0; i<5; i++) {
+            String[] p = places[i];
+
+            // 대기실 1개 탐색
+            for (int x=0; x<5; x++)
+                for (int y=0; y<5; y++)
+                    if (p[x].charAt(y) == 'P')
+                        if (!isKeepDist(p, x, y)) answer[i] = 0;
+        }
+        return answer;
+    }
+
+    /**
+     * lvTwo06
+     */
+    public boolean isKeepDist(String[] p, int x, int y) {
+        for (int i=-2; i<=2; i++) {
+            for (int j=-2; j<=2; j++) {
+                int dist = i*i + j*j;
+                if (dist > 4) continue; // 맨허튼 거리 2 이하만 확인
+
+                int nx = x+i;
+                int ny = y+j;
+                if (nx<0 || nx>=5 || ny<0 || ny>=5) continue;
+
+                if (p[nx].charAt(ny) == 'P')
+                    if (dist == 1) return false;    // P간 거리가 1일 땐 거리두기 fail
+                    else if (dist == 2) {           // 대각선 관계
+                        if (p[nx].charAt(y) != 'X' || p[x].charAt(ny) != 'X') return false;
+                    } else if (dist == 4) {         // 직선 관계
+                        if (p[x + i/2].charAt(y + j/2) != 'X') return false;
+                    }
+            }
+        }
+        return true;
+    }
 
     /**
      * 단체사진 찍기
