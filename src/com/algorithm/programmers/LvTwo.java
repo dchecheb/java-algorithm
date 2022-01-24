@@ -14,7 +14,7 @@ public class LvTwo {
         Assert.assertEquals(16384, lvTwo07("FRANCE", "french"));
         Assert.assertEquals(43690, lvTwo07("aa1+aa2", "AAAA12"));
         Assert.assertEquals(65536, lvTwo07("E=M*C^2", "e=m*c^2"));
-        Assert.assertEquals(65536, lvTwo07("handshake", "shake hand"));
+        Assert.assertEquals(65536, lvTwo07("handshake", "shake hands"));
     }
 
     /**
@@ -26,49 +26,33 @@ public class LvTwo {
         str1 = str1.toLowerCase();
         str2 = str2.toLowerCase();
 
-        // 중복 체크
-        HashMap<String, Integer> str1Map = new HashMap<>();
-        HashMap<String, Integer> str2Map = new HashMap<>();
-        updateStrMap(str1Map, str1); // str1Map.get("ha") := ha 문자열 개수
-        updateStrMap(str2Map, str2);
+        List<String> str1Words = getWords(str1);
+        List<String> str2Words = getWords(str2);
+        List<String> inter = new ArrayList<>();
+        List<String> union = new ArrayList<>();
 
-        float inter = 0f; // 교집합 개수
-        float union = 0f; // 합집합 개수
-
-        for (String key1 : str1Map.keySet()) {
-            for (String key2 : str2Map.keySet()) {
-                if (key1.equals(key2)) {
-                    inter += Math.min(str1Map.get(key1), str2Map.get(key2));
-                    union += Math.max(str1Map.get(key1), str2Map.get(key2));
-                    str1Map.put(key1, 0);
-                    str2Map.put(key2, 0);
-                    break;
-                }
-            }
+        // 겹치면 교+합에 추가, 겹치지 않으면 합에만 추가
+        for (String word1 : str1Words) {
+            if (str2Words.remove(word1)) inter.add(word1);
+            union.add(word1);
         }
+        for (String word2 : str2Words) union.add(word2);
 
-        for (String key : str1Map.keySet()) union += str1Map.get(key);
-        for (String key : str2Map.keySet()) union += str2Map.get(key);
-
-        if (inter == 0f || union == 0f) return 65536;
-        return (int) Math.floor(inter / union * 65536);
+        if (union.size() == 0) return 65536;
+        return (int) Math.floor((float)inter.size() / (float)union.size() * 65536);
     }
 
     /**
      * lvTwo07
      */
-    public void updateStrMap(HashMap<String, Integer> strMap, String str) {
-        for (int i=0; i<str.length()-1; i++) {
-            String s = str.substring(i, i+2);
-            if (!s.matches("[a-z]+")) continue;
-            if (strMap.containsKey(s)) {
-                strMap.put(s, strMap.get(s)+1);
-            } else {
-                strMap.put(s, 1);
-            }
+    public List<String> getWords(String s) {
+        List<String> result = new ArrayList<>();
+        for (int i=0; i<s.length()-1; i++) {
+            if (!s.substring(i, i+2).matches("[a-z]+")) continue;
+            result.add(s.substring(i, i+2));
         }
+        return result;
     }
-
 
     @Test
     public void testLvTwo06() {
