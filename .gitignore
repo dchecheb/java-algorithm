@@ -10,4 +10,4 @@
 /src/com/algorithm/contest/
 .idea/
 /out/
-
+.DS_Store

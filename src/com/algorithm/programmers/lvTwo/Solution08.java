@@ -1,5 +1,6 @@
 package com.algorithm.programmers.lvTwo;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,12 +10,19 @@ import java.util.List;
 
 public class Solution08 {
 
+    @Test
+    public void testSolution() {
+        Assert.assertArrayEquals(new int[]{16}, solution(new String[]{"SL","LR"}));
+        Assert.assertArrayEquals(new int[]{1,1,1,1}, solution(new String[]{"S"}));
+        Assert.assertArrayEquals(new int[]{4,4}, solution(new String[]{"R", "R"}));
+    }
+
     /**
      * 빛의 경로 사이
      * https://programmers.co.kr/learn/courses/30/lessons/86052
      */
     public int[] solution(String[] grid) {
-        List<Integer> answer = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
         int maxX = grid.length;
         int maxY = grid[0].length();
         boolean[][][] visited = new boolean[maxX][maxY][4];
@@ -23,34 +31,41 @@ public class Solution08 {
             for (int y=0; y<maxY; y++) {
                 for (int d=0; d<4; d++) {
                     if (!visited[x][y][d]) {
-                        answer.add(getCost(grid, visited, x, y, d, maxX, maxY));
+                        result.add(getCost(grid, visited, x, y, d, maxX, maxY));
                     }
                 }
             }
         }
-        Collections.sort(answer);
+        Collections.sort(result);
+        int[] answer = new int[result.size()];
+        for (int i=0; i<result.size(); i++) {
+            System.out.println(result.get(i));
+            answer[i] = result.get(i);
+        }
 
         return answer;
     }
 
     public int getCost(String[] grid, boolean[][][] visited, int x, int y, int d, int maxX, int maxY) {
-        int[] dx = {-1,1,0,0}; // 상 하 좌 우
-        int[] dy = {0,0,-1,1}; // 상 하 좌 우
+        // 0, 1, 2, 3 각각 상하좌우를 의미.
+        int[] dx = {-1,1,0,0}; // 상 하 좌 우 로 이동했을 때 x 좌표 위치
+        int[] dy = {0,0,-1,1};
+        int[] ld = {2, 3, 1, 0}; // l 노드로 들어왔을 떄 다음 방향 index
+        int[] rd = {3, 2, 0, 1};
         int cost = 0;
 
         while (!visited[x][y][d]) {
-            cost++;
             visited[x][y][d] = true;
             if (grid[x].charAt(y) == 'L') {
-                d = (d + 2) % 4;    // 상 -> 좌, 하 -> 우
+                d = ld[d];    // 상 -> 좌, 하 -> 우
             } else if (grid[x].charAt(y) == 'R') {
-                if (d == 0) d = 3;  // 상 -> 우
-                if (d == 1) d = 2;  // 하 -> 좌
-                if (d == 2) d = 1;
-                if (d == 3) d = 0;
+                d = rd[d];
             }
-            x = (x + dx[d]) % maxX;
-            y = (y + dy[d]) % maxY;
+            int nx = x + dx[d];
+            int ny = y + dy[d];
+            x = nx == -1 ? maxX - 1 : nx % maxX;
+            y = ny == -1 ? maxY - 1 : ny % maxY;
+            cost++;
         }
 
         return cost;
