@@ -7,6 +7,39 @@ import java.util.*;
 
 public class LvOne {
 
+    @Test
+    public int lvOne09(int n, int[] lost, int[] reserve) {
+        int answer = n - lost.length;
+        Arrays.sort(lost);
+        Arrays.sort(reserve);
+
+        int[] near = {0,-1,1};
+        for (int i=0; i<lost.length; i++) {
+            // 자신, 앞, 뒤 순서로 체크
+            for (int j : near) {
+                int nearNum = lost[i]+j;
+                if (nearNum == 0 || nearNum > n) continue;
+
+                if (contain(reserve, nearNum)) {
+                    answer++;
+                    break;
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    boolean contain(int[] arr, int i) {
+        for (int j=0; j<arr.length; j++) {
+            if (arr[j] == i) {
+                arr[j] = 0;
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * 없는 숫자 더하기
      * https://programmers.co.kr/learn/courses/30/lessons/86051

@@ -1,13 +1,11 @@
-package com.algorithm.programmers;
+package com.algorithm.programmers.lvTwo;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.Map;
 
 public class LvTwo {
+
 
     @Test
     public void testLvTwo07() {
@@ -36,6 +34,7 @@ public class LvTwo {
             if (str2Words.remove(word1)) inter.add(word1);
             union.add(word1);
         }
+
         for (String word2 : str2Words) union.add(word2);
 
         if (union.size() == 0) return 65536;
