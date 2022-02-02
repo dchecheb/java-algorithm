@@ -24,20 +24,34 @@ public class Solution09 {
             trucks.offer(truck_weights[i]);
         }
 
-        LinkedList<Integer> bridge = new LinkedList<>();
-        bridge.add(trucks.poll());
-        while (!trucks.isEmpty()) { // O(truck 개수 * 다리 길이) = 100,000,000 = 1억
-            int sum=0;
-            for (int i=0; i<Math.min(bridge_length-1, bridge.size()); i++) { // O(bridge.length) 10000
-                sum += bridge.get(i);
-            }
-            if (weight >= sum+trucks.peek()) {
-                bridge.addFirst(trucks.poll());
+        LinkedList<Integer> road = new LinkedList<>();
+        road.add(trucks.poll());
+        int bridge_weight = road.get(0);
+        while (!trucks.isEmpty()) { // O(truck 개수) = 10000
+            if (weight >= bridge_weight+trucks.peek()) {
+                road.addFirst(trucks.poll());
             } else {
-                bridge.addFirst(0);
+                road.addFirst(0);
             }
+            int end = road.size() < bridge_length ? 0 : road.get(bridge_length-1);
+            int first = road.get(0);
+            bridge_weight = bridge_weight - end + first;
         }
 
-        return bridge.size()+bridge_length;
+        return road.size()+bridge_length;
+    }
+
+    class Bridge {
+        int trucks_weight;
+        int firstTruck;
+        int finalTruck;
+
+        public void enter(int w) {
+
+        }
+
+        public void escape(int w) {
+
+        }
     }
 }
